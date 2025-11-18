@@ -4,7 +4,7 @@ import App from './App';
 import './index.css';
 
 // Add error boundary and debugging
-console.log('🚀 Context Bridge - Main.tsx loading...');
+console.log('Context Bridge - Main.tsx loading...');
 console.log('Environment:', import.meta.env);
 console.log('Root element:', document.getElementById('root'));
 
@@ -44,15 +44,15 @@ try {
     throw new Error('Root element not found');
   }
 
-  console.log('✅ Root element found, creating React root...');
+  console.log('Root element found, creating React root...');
   const root = ReactDOM.createRoot(rootElement);
   
-  console.log('✅ React root created, rendering app...');
+  console.log('React root created, rendering app...');
   root.render(
     <React.StrictMode>
       <ErrorBoundary>
         <div style={{padding: '20px'}}>
-          <h1 style={{color: '#333'}}>🔗 Context Bridge</h1>
+          <h1 style={{color: '#333'}}>Context Bridge</h1>
           <p>Loading application...</p>
           <App />
         </div>
@@ -60,9 +60,9 @@ try {
     </React.StrictMode>,
   );
   
-  console.log('✅ App rendered successfully');
+  console.log('App rendered successfully');
 } catch (error) {
-  console.error('❌ Failed to render app:', error);
+  console.error('Failed to render app:', error);
   // Fallback rendering
   document.body.innerHTML = `
     <div style="padding: 20px; font-family: Arial;">

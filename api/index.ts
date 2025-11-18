@@ -1,69 +1,136 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
 
-// Load environment variables
-dotenv.config();
+// Simple mock data for API responses
+const mockContexts = [
+  {
+    id: '1',
+    title: 'Pulse AI Research Notes',
+    content: 'Researching AI-powered context management systems for cross-platform integration.',
+    source: 'windows',
+    platform: 'Windows 11',
+    application: 'Notepad++',
+    timestamp: new Date('2024-01-15T10:30:00Z'),
+    tags: ['research', 'ai', 'pulse-ai', 'notes']
+  },
+  {
+    id: '2',
+    title: 'Context Bridge Architecture',
+    content: 'Designing a TypeScript/Node.js backend with React frontend for context management.',
+    source: 'web',
+    platform: 'Chrome',
+    url: 'https://github.com/pulse-ai/context-bridge',
+    timestamp: new Date('2024-01-15T11:15:00Z'),
+    tags: ['architecture', 'typescript', 'react', 'nodejs']
+  }
+];
 
-// Import routes
-import contextRoutes from '../src/server/routes/context';
-import insightRoutes from '../src/server/routes/insights';
+const mockInsights = [
+  {
+    id: '1',
+    title: 'Cross-Platform Development Pattern',
+    description: 'Multiple contexts show focus on cross-platform compatibility.',
+    type: 'pattern',
+    confidence: 0.92,
+    relatedContexts: ['1', '2'],
+    timestamp: new Date('2024-01-15T17:00:00Z')
+  }
+];
 
-const app = express();
+// CORS headers helper
+function setCorsHeaders(res: VercelResponse) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+}
 
-// CORS configuration for Vercel
-const corsOptions = {
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'https://*.vercel.app',
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined
-  ].filter(Boolean),
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
+// Main handler function
+export default function handler(req: VercelRequest, res: VercelResponse) {
+  setCorsHeaders(res);
 
-// Middleware
-app.use(cors(corsOptions));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+  // Handle preflight OPTIONS requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-// Routes (no /api prefix needed since Vercel routes /api/* to this function)
-app.use('/context', contextRoutes);
-app.use('/insights', insightRoutes);
+  const { url, method } = req;
+  const path = url?.replace('/api', '') || '/';
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'Context Bridge API is running on Vercel',
-    environment: process.env.NODE_ENV || 'development',
-    timestamp: new Date().toISOString(),
-    platform: 'vercel',
-    url: process.env.VERCEL_URL || 'localhost'
-  });
-});
+  console.log(`API Request: ${method} ${path}`);
 
-// Root API endpoint
-app.get('/', (req, res) => {
-  res.json({ 
-    message: 'Context Bridge API',
-    endpoints: ['/health', '/context', '/insights'],
-    timestamp: new Date().toISOString()
-  });
-});
+  try {
+    // Health check endpoint
+    if (path === '/health') {
+      return res.status(200).json({
+        success: true,
+        data: {
+          status: 'Context Bridge API is running on Vercel',
+          environment: process.env.NODE_ENV || 'production',
+          timestamp: new Date().toISOString(),
+          platform: 'vercel'
+        }
+      });
+    }
 
-// Catch all routes
-app.all('/*', (req, res) => {
-  res.status(404).json({ 
-    error: 'API endpoint not found',
-    path: req.path,
-    method: req.method
-  });
-});
+    // Context endpoints
+    if (path === '/context' && method === 'GET') {
+      return res.status(200).json({
+        success: true,
+        data: mockContexts,
+        message: `Retrieved ${mockContexts.length} contexts`
+      });
+    }
 
-// Export handler for Vercel
-export default (req: VercelRequest, res: VercelResponse) => {
-  return app(req as any, res as any);
-};
+    if (path === '/context' && method === 'POST') {
+      const newContext = {
+        ...req.body,
+        id: Date.now().toString(),
+        timestamp: new Date()
+      };
+      mockContexts.unshift(newContext);
+      
+      return res.status(201).json({
+        success: true,
+        data: newContext,
+        message: 'Context added successfully'
+      });
+    }
+
+    // Insights endpoints
+    if (path === '/insights' && method === 'GET') {
+      return res.status(200).json({
+        success: true,
+        data: mockInsights,
+        message: `Retrieved ${mockInsights.length} insights`
+      });
+    }
+
+    // Root endpoint
+    if (path === '/' || path === '') {
+      return res.status(200).json({
+        success: true,
+        data: {
+          message: 'Context Bridge API',
+          endpoints: ['/health', '/context', '/insights'],
+          timestamp: new Date().toISOString()
+        }
+      });
+    }
+
+    // 404 for unknown routes
+    return res.status(404).json({
+      success: false,
+      error: 'API endpoint not found',
+      path: path,
+      method: method,
+      available: ['/health', '/context', '/insights']
+    });
+
+  } catch (error) {
+    console.error('API Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+}

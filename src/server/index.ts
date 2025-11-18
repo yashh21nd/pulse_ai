@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files in production
 if (!isDev) {
   const staticPath = path.join(__dirname, '../client');
-  console.log(`📁 Serving static files from: ${staticPath}`);
+  console.log(`Serving static files from: ${staticPath}`);
   app.use(express.static(staticPath));
 }
 
@@ -53,7 +53,7 @@ app.get('/api/health', (req, res) => {
 if (!isDev) {
   app.get('*', (req, res) => {
     const indexPath = path.join(__dirname, '../client/index.html');
-    console.log(`📄 Serving index.html from: ${indexPath}`);
+    console.log(`Serving index.html from: ${indexPath}`);
     res.sendFile(indexPath, (err) => {
       if (err) {
         console.error('Error serving index.html:', err);
@@ -65,7 +65,7 @@ if (!isDev) {
 
 // Start server
 const server = app.listen(PORT, () => {
-  console.log(`🚀 Context Bridge server running on port ${PORT}`);
-  console.log(`📊 API endpoints available at http://localhost:${PORT}/api`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`Context Bridge server running on port ${PORT}`);
+  console.log(`API endpoints available at http://localhost:${PORT}/api`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
