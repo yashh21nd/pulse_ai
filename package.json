@@ -10,6 +10,7 @@
     "build": "npm run clean && npm run server:build && npm run client:build",
     "build:prod": "npm run clean && npm run client:build && npm run server:build",
     "build:vercel": "npm run client:build",
+    "vercel-build": "npm run client:build",
     "server:dev": "nodemon --watch src/server --ignore dist --ignore node_modules --exec tsx src/server/index.ts",
     "server:build": "tsc -p src/server/tsconfig.json --incremental false",
     "client:dev": "vite --host localhost",

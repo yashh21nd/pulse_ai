@@ -5,7 +5,7 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "buildCommand": "npm run build:prod",
+        "buildCommand": "npm run client:build",
         "outputDirectory": "dist/client"
       }
     },
@@ -14,11 +14,14 @@
       "use": "@vercel/node"
     }
   ],
-  "outputDirectory": "dist/client",
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "/api/index.ts"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
     },
     {
       "src": "/(.*)",

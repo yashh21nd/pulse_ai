@@ -1,14 +1,32 @@
 import { Context, Insight, Connection, ApiResponse, AddContextRequest, ContextStats } from '../types';
 
-const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 
-  (typeof window !== 'undefined' && window.location.origin.includes('vercel.app') 
-    ? `${window.location.origin}/api` 
-    : 'http://localhost:5000/api');
+const API_BASE_URL = (() => {
+  // Check for explicit environment variable first
+  if ((import.meta as any).env.VITE_API_URL) {
+    return (import.meta as any).env.VITE_API_URL;
+  }
+  
+  // Handle different environments
+  if (typeof window !== 'undefined') {
+    if (window.location.hostname.includes('vercel.app')) {
+      return `${window.location.origin}/api`;
+    }
+    if (window.location.hostname === 'localhost') {
+      return window.location.port === '3000' ? 'http://localhost:5000/api' : 'http://localhost:3000/api';
+    }
+  }
+  
+  // Default fallback
+  return 'http://localhost:5000/api';
+})();
 
 class ApiClient {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`API Request: ${options?.method || 'GET'} ${url}`);
+    
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      const response = await fetch(url, {
         headers: {
           'Content-Type': 'application/json',
           ...options?.headers,
@@ -16,13 +34,21 @@ class ApiClient {
         ...options,
       });
 
+      console.log(`API Response: ${response.status} ${response.statusText}`);
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('API Error Response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
       }
 
-      return await response.json();
+      const data = await response.json();
+      console.log('API Success:', data);
+      return data;
     } catch (error) {
       console.error('API request failed:', error);
+      console.error('Request URL:', url);
+      console.error('Request options:', options);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
