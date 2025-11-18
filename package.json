@@ -8,16 +8,18 @@
     "dev:server": "npm run server:dev",
     "dev:client": "npm run client:dev",
     "build": "npm run clean && npm run client:build && npm run server:build",
+    "build:prod": "npm run client:build && npm run server:build",
     "server:dev": "nodemon --watch src/server --ignore dist --ignore node_modules --exec tsx src/server/index.ts",
     "server:build": "tsc -p src/server/tsconfig.json --incremental",
     "client:dev": "vite --host localhost",
-    "client:build": "tsc -p src/client/tsconfig.json && vite build",
+    "client:build": "tsc -p src/client/tsconfig.json && vite build --outDir dist/client",
+    "client:build:vercel": "tsc -p src/client/tsconfig.json && vite build --outDir ../../dist/client",
     "client:preview": "vite preview",
     "start": "cross-env NODE_ENV=production node dist/server/index.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --cache",
     "type-check": "tsc --noEmit --incremental",
-    "clean": "rimraf dist *.tsbuildinfo node_modules/.tmp",
-    "deploy:vercel": "vercel --prod",
+    "clean": "npx rimraf dist *.tsbuildinfo node_modules/.tmp || echo 'Clean completed'",
+    "deploy:vercel": "npm run build && vercel --prod",
     "deploy:netlify": "npm run build && netlify deploy --prod --dir=dist/client",
     "deploy:railway": "railway up",
     "deploy:render": "npm run build && npm start",
@@ -37,7 +39,8 @@
     "react-dom": "^18.2.0",
     "axios": "^1.6.0",
     "uuid": "^9.0.1",
-    "date-fns": "^2.30.0"
+    "date-fns": "^2.30.0",
+    "rimraf": "^5.0.5"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
@@ -54,13 +57,11 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "nodemon": "^3.0.2",
-    "rimraf": "^5.0.5",
     "tsx": "^4.6.0",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
     "cross-env": "^7.0.3",
     "pm2": "^5.3.0",
-    "cross-env": "^7.0.3",
-    "pm2": "^5.3.0"
+    "terser": "^5.24.0"
   }
 }

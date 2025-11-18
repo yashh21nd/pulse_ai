@@ -323,7 +323,7 @@ export const ConnectionsList: React.FC<ConnectionsListProps> = ({
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         .connection-details {
           margin-top: 1rem;
           padding: 1rem;

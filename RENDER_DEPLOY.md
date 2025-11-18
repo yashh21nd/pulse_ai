@@ -21,7 +21,7 @@ Region: Oregon (US West) or closest to you
 Branch: main
 Root Directory: (leave blank)
 Runtime: Node
-Build Command: npm install && npm run build
+Build Command: npm install && npm run build:prod
 Start Command: npm start
 ```
 

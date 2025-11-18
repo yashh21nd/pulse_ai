@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Context as ContextItem, Insight, Connection as ContextConnection } from './types';
-import { ContextList } from './components/ContextList-fixed';
-import { InsightsList } from './components/InsightsList-optimized';
-import { ConnectionsList } from './components/ConnectionsList-fixed';
+import { ContextList } from './components/ContextList';
+import { InsightsList } from './components/InsightsList';
+import { ConnectionsList } from './components/ConnectionsList';
 import { AddContextForm } from './components/AddContextForm';
-import { api } from './services/api-optimized';
+import { contextApi, insightsApi } from './services/api';
 import './index.css';
 
 function App() {
@@ -20,17 +20,21 @@ function App() {
       setError(null);
 
       // Load context items
-      const contextResponse = await api.getContextItems();
-      setContextItems(contextResponse);
+      const contextResponse = await contextApi.getAll();
+      if (contextResponse.success && contextResponse.data) {
+        setContextItems(contextResponse.data);
+      }
 
       // Load insights
-      const insightsResponse = await api.getInsights();
-      setInsights(insightsResponse.insights);
+      const insightsResponse = await insightsApi.getAll();
+      if (insightsResponse.success && insightsResponse.data) {
+        setInsights(insightsResponse.data);
+      }
 
-      // Analyze connections for existing items
-      if (contextResponse.length > 1) {
-        const analysisResponse = await api.analyzeConnections();
-        setConnections(analysisResponse.connections);
+      // Load connections
+      if (contextResponse.success && contextResponse.data && contextResponse.data.length > 1) {
+        // For now, use empty connections as the component manages its own data
+        setConnections([]);
       }
     } catch (err) {
       console.error('Error loading data:', err);
@@ -46,8 +50,10 @@ function App() {
 
   const handleAddContext = useCallback(async (newContext: Omit<ContextItem, 'id' | 'timestamp'>) => {
     try {
-      const addedContext = await api.addContextItem(newContext);
-      setContextItems(prev => [addedContext, ...prev]);
+      const addedContext = await contextApi.create(newContext);
+      if (addedContext.success && addedContext.data) {
+        setContextItems(prev => [addedContext.data!, ...prev]);
+      }
       
       // Trigger new analysis with debouncing
       setTimeout(() => {
@@ -61,7 +67,7 @@ function App() {
 
   // Memoize computed values
   const stats = useMemo(() => {
-    const actionableInsights = insights.filter(i => i.actionable).length;
+    const actionableInsights = insights.filter(i => i.type === 'recommendation').length;
     return {
       contextCount: contextItems.length,
       connectionsCount: connections.length,
@@ -119,24 +125,31 @@ function App() {
 
       <div className="demo-section">
         <h3>📝 Add New Context</h3>
-        <AddContextForm onAddContext={handleAddContext} />
+        <AddContextForm onContextAdded={(success, message) => {
+          if (success) {
+            console.log(message || 'Context added successfully!');
+            loadInitialData();
+          } else {
+            setError(message || 'Failed to add context.');
+          }
+        }} />
       </div>
 
       <div className="dashboard">
         <div className="card">
           <h3>🧠 AI Insights</h3>
-          <InsightsList insights={insights} />
+          <InsightsList contextIds={contextItems.map(c => c.id)} />
         </div>
         
         <div className="card">
           <h3>🔗 Context Connections</h3>
-          <ConnectionsList connections={connections} contextItems={contextItems} />
+          <ConnectionsList />
         </div>
       </div>
 
       <div className="card">
         <h3>📚 Recent Context Items</h3>
-        <ContextList items={contextItems} />
+        <ContextList />
       </div>
     </div>
   );

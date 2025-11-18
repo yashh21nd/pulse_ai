@@ -404,7 +404,7 @@ export const AddContextForm: React.FC<AddContextFormProps> = ({
         </div>
       </form>
 
-      <style jsx>{`
+      <style>{`
         .error-message {
           animation: slideIn 0.3s ease-out;
         }

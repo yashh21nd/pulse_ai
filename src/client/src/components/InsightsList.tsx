@@ -262,7 +262,7 @@ export const InsightsList: React.FC<InsightsListProps> = ({
         </div>
       )}
 
-      <style jsx>{`
+      <style>{`
         .related-contexts {
           margin-top: 0.75rem;
           padding: 0.75rem;

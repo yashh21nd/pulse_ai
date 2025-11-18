@@ -1,34 +1,31 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "src/client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "../../dist/client"
-      }
-    },
-    {
-      "src": "src/server/index.ts",
-      "use": "@vercel/node"
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/client",
+  "functions": {
+    "src/server/index.ts": {
+      "runtime": "nodejs18.x",
+      "maxDuration": 30
     }
-  ],
+  },
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/src/server/index.ts"
+      "dest": "src/server/index.ts"
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/client/$1"
+      "dest": "dist/client/$1"
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "FRONTEND_URL": "https://context-bridge.vercel.app"
   },
-  "functions": {
-    "src/server/index.ts": {
-      "maxDuration": 30
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/src/server/index.ts"
     }
-  }
+  ]
 }
