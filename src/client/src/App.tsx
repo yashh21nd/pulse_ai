@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Context as ContextItem, Insight, Connection as ContextConnection } from './types';
 import { ContextList } from './components/ContextList';
 import { InsightsList } from './components/InsightsList';
 import { ConnectionsList } from './components/ConnectionsList';
 import { AddContextForm } from './components/AddContextForm';
-import { contextApi, insightsApi } from './services/api';
+// Using mock data for demo
 import './index.css';
 
 function App() {
@@ -16,86 +16,54 @@ function App() {
   
   console.log('🎯 App component rendering...');
 
-  const loadInitialData = useCallback(async () => {
+  const loadInitialData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // Load context items
-      const contextResponse = await contextApi.getAll();
-      if (contextResponse.success && contextResponse.data) {
-        setContextItems(contextResponse.data);
-      } else {
-        console.warn('API failed, using mock data:', contextResponse.error);
-        // Import mock data dynamically
-        const { mockData } = await import('./services/api');
-        setContextItems(mockData.contexts);
-        setInsights(mockData.insights);
-        setConnections(mockData.connections);
-        setLoading(false);
-        return;
-      }
-
-      // Load insights
-      const insightsResponse = await insightsApi.getAll();
-      if (insightsResponse.success && insightsResponse.data) {
-        setInsights(insightsResponse.data);
-      } else {
-        console.warn('Insights API failed, using mock data');
-        const { mockData } = await import('./services/api');
-        setInsights(mockData.insights);
-      }
-
-      // Load connections
-      if (contextResponse.success && contextResponse.data && contextResponse.data.length > 1) {
-        // For now, use empty connections as the component manages its own data
-        setConnections([]);
-      }
-    } catch (err) {
-      console.error('Error loading data:', err);
-      console.log('Falling back to mock data');
-      // Fallback to mock data
+      // Always use mock data for now to avoid API issues
+      console.log('Loading mock data for demo...');
       const { mockData } = await import('./services/api');
       setContextItems(mockData.contexts);
       setInsights(mockData.insights);
       setConnections(mockData.connections);
-      setError('Using demo data - API connection failed');
+      
+    } catch (err) {
+      console.error('Error loading data:', err);
+      setError('Failed to load application data');
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     loadInitialData();
-  }, [loadInitialData]);
+  }, []);
 
-  const handleAddContext = useCallback(async (newContext: Omit<ContextItem, 'id' | 'timestamp'>) => {
+  const handleAddContext = async (newContext: Omit<ContextItem, 'id' | 'timestamp'>) => {
     try {
-      const addedContext = await contextApi.create(newContext);
-      if (addedContext.success && addedContext.data) {
-        setContextItems(prev => [addedContext.data!, ...prev]);
-      }
-      
-      // Trigger new analysis with debouncing
-      setTimeout(() => {
-        loadInitialData();
-      }, 500);
+      console.log('Adding new context:', newContext);
+      // For demo, just add to local state
+      const newItem = {
+        ...newContext,
+        id: Date.now().toString(),
+        timestamp: new Date()
+      };
+      setContextItems(prev => [newItem, ...prev]);
     } catch (err) {
       console.error('Error adding context:', err);
       setError('Failed to add context item. Please try again.');
     }
-  }, [loadInitialData]);
+  };
 
-  // Memoize computed values
-  const stats = useMemo(() => {
-    const actionableInsights = insights.filter(i => i.type === 'recommendation').length;
-    return {
-      contextCount: contextItems.length,
-      connectionsCount: connections.length,
-      insightsCount: insights.length,
-      actionableCount: actionableInsights
-    };
-  }, [contextItems.length, connections.length, insights.length, insights]);
+  // Simple computed values
+  const actionableInsights = insights.filter(i => i.type === 'recommendation').length;
+  const stats = {
+    contextCount: contextItems.length,
+    connectionsCount: connections.length,
+    insightsCount: insights.length,
+    actionableCount: actionableInsights
+  };
 
   if (loading) {
     console.log('📊 App in loading state');
@@ -113,8 +81,8 @@ function App() {
     );
   }
 
-  // Memoize the stat cards to prevent unnecessary re-renders
-  const StatCards = useMemo(() => (
+  // Simple stat cards component
+  const StatCards = (
     <div className="stats">
       <div className="stat-card">
         <div className="stat-number">{stats.contextCount}</div>
@@ -133,7 +101,7 @@ function App() {
         <div className="stat-label">Actionable Items</div>
       </div>
     </div>
-  ), [stats]);
+  );
 
   return (
     <div className="container">
@@ -182,4 +150,4 @@ function App() {
   );
 }
 
-export default React.memo(App);
+export default App;
