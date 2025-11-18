@@ -1,0 +1,19 @@
+{
+  "watch": ["src/server"],
+  "ext": "ts,js,json",
+  "ignore": [
+    "node_modules",
+    "dist",
+    "src/client",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.d.ts",
+    "*.log",
+    "*.tsbuildinfo"
+  ],
+  "exec": "tsx src/server/index.ts",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "delay": "1000"
+}
