@@ -23,12 +23,25 @@ function App() {
       const contextResponse = await contextApi.getAll();
       if (contextResponse.success && contextResponse.data) {
         setContextItems(contextResponse.data);
+      } else {
+        console.warn('API failed, using mock data:', contextResponse.error);
+        // Import mock data dynamically
+        const { mockData } = await import('./services/api');
+        setContextItems(mockData.contexts);
+        setInsights(mockData.insights);
+        setConnections(mockData.connections);
+        setLoading(false);
+        return;
       }
 
       // Load insights
       const insightsResponse = await insightsApi.getAll();
       if (insightsResponse.success && insightsResponse.data) {
         setInsights(insightsResponse.data);
+      } else {
+        console.warn('Insights API failed, using mock data');
+        const { mockData } = await import('./services/api');
+        setInsights(mockData.insights);
       }
 
       // Load connections
@@ -38,7 +51,13 @@ function App() {
       }
     } catch (err) {
       console.error('Error loading data:', err);
-      setError('Failed to load data. Please try again.');
+      console.log('Falling back to mock data');
+      // Fallback to mock data
+      const { mockData } = await import('./services/api');
+      setContextItems(mockData.contexts);
+      setInsights(mockData.insights);
+      setConnections(mockData.connections);
+      setError('Using demo data - API connection failed');
     } finally {
       setLoading(false);
     }

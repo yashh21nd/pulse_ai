@@ -32,15 +32,15 @@ class ApiClient {
 
   // Context endpoints
   async getContexts(): Promise<ApiResponse<Context[]>> {
-    return this.request<Context[]>('/contexts');
+    return this.request<Context[]>('/context');
   }
 
   async getContext(id: string): Promise<ApiResponse<Context>> {
-    return this.request<Context>(`/contexts/${id}`);
+    return this.request<Context>(`/context/${id}`);
   }
 
   async addContext(context: AddContextRequest): Promise<ApiResponse<Context>> {
-    return this.request<Context>('/contexts', {
+    return this.request<Context>('/context', {
       method: 'POST',
       body: JSON.stringify(context),
     });
@@ -52,13 +52,13 @@ class ApiClient {
     tags: string[];
     confidence: number;
   }>> {
-    return this.request(`/contexts/${id}/analyze`, {
+    return this.request(`/context/${id}/analyze`, {
       method: 'POST',
     });
   }
 
   async getContextStats(): Promise<ApiResponse<ContextStats>> {
-    return this.request<ContextStats>('/contexts/api/stats');
+    return this.request<ContextStats>('/context/api/stats');
   }
 
   // Insights endpoints
@@ -99,11 +99,11 @@ class ApiClient {
 
   // Connections endpoints
   async getAllConnections(): Promise<ApiResponse<Connection[]>> {
-    return this.request<Connection[]>('/insights/connections/all');
+    return this.request<Connection[]>('/context/connections/all');
   }
 
   async getConnectionsForContext(contextId: string): Promise<ApiResponse<Connection[]>> {
-    return this.request<Connection[]>(`/insights/connections/${contextId}`);
+    return this.request<Connection[]>(`/context/connections/${contextId}`);
   }
 }
 
