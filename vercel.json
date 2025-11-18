@@ -1,12 +1,19 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist/client",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "nodejs18.x"
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "buildCommand": "npm run build:prod",
+        "outputDirectory": "dist/client"
+      }
+    },
+    {
+      "src": "api/index.ts",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
@@ -14,10 +21,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/client/index.html"
+      "dest": "/dist/client/$1"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }

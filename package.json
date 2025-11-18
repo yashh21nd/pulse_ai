@@ -9,7 +9,7 @@
     "dev:client": "npm run client:dev",
     "build": "npm run clean && npm run server:build && npm run client:build",
     "build:prod": "npm run server:build && npm run client:build",
-    "build:vercel": "npm run client:build",
+        \"build:vercel\": \"npm run build:prod\",
     "server:dev": "nodemon --watch src/server --ignore dist --ignore node_modules --exec tsx src/server/index.ts",
     "server:build": "tsc -p src/server/tsconfig.json --incremental",
     "client:dev": "vite --host localhost",
@@ -44,24 +44,25 @@
     "rimraf": "^5.0.5",
     "@vercel/node": "^3.0.0",
     "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17"
-  },
-  "devDependencies": {
+    "@types/react-dom": "^18.2.17",
     "@types/express": "^4.17.21",
     "@types/cors": "^2.8.17",
     "@types/node": "^20.10.0",
-    "@types/uuid": "^9.0.7",
+    "@types/uuid": "^9.0.7"
+  },
+  "devDependencies": {
+
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@types/uuid": "^9.0.7",
+    "typescript": "^5.2.2" "^4.2.1",
     "concurrently": "^8.2.2",
     "eslint": "^8.55.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "nodemon": "^3.0.2",
     "tsx": "^4.6.0",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.8",
+    "vite": "^5.0.8\",
     "cross-env": "^7.0.3",
     "pm2": "^5.3.0",
     "terser": "^5.24.0"
