@@ -13,6 +13,8 @@ function App() {
   const [connections, setConnections] = useState<ContextConnection[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  console.log('🎯 App component rendering...');
 
   const loadInitialData = useCallback(async () => {
     try {
@@ -96,10 +98,16 @@ function App() {
   }, [contextItems.length, connections.length, insights.length, insights]);
 
   if (loading) {
+    console.log('📊 App in loading state');
     return (
-      <div className="container">
+      <div className="container" style={{padding: '40px', textAlign: 'center'}}>
         <div className="loading">
           <h2>🧠 Analyzing your context...</h2>
+          <p>Loading Context Bridge application...</p>
+          <div style={{marginTop: '20px', fontSize: '0.9em', color: '#666'}}>
+            <p>✅ React component loaded</p>
+            <p>🔄 Fetching data...</p>
+          </div>
         </div>
       </div>
     );
