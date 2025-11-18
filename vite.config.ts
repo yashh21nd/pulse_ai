@@ -8,6 +8,7 @@ export default defineConfig({
       fastRefresh: true,
       // Exclude node_modules from transformation
       exclude: /node_modules/,
+      jsxImportSource: 'react'
     })
   ],
   root: 'src/client',

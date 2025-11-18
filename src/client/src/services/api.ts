@@ -1,6 +1,9 @@
 import { Context, Insight, Connection, ApiResponse, AddContextRequest, ContextStats } from '../types';
 
-const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 
+  (typeof window !== 'undefined' && window.location.origin.includes('vercel.app') 
+    ? `${window.location.origin}/api` 
+    : 'http://localhost:5000/api');
 
 class ApiClient {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {

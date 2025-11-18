@@ -1,45 +1,51 @@
 # Vercel Deployment Guide for Context Bridge
 
-## 🚀 Vercel Deployment Steps
+## 🚀 Quick Deploy to Vercel
 
-### 1. **Install Vercel CLI** (if not already installed)
+### **Option 1: One-Click Deploy**
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yashh21nd/pulse_ai)
+
+### **Option 2: Manual Deploy**
+
+#### 1. **Install Vercel CLI** (if not installed)
 ```bash
 npm install -g vercel
 ```
 
-### 2. **Login to Vercel**
+#### 2. **Login to Vercel**
 ```bash
 vercel login
 ```
 
-### 3. **Deploy from Command Line**
+#### 3. **Deploy from Terminal**
 ```bash
 npm run deploy:vercel
 ```
 
-### 4. **Or Deploy via Vercel Dashboard**
+#### 4. **Via Vercel Dashboard**
 1. Go to [vercel.com](https://vercel.com)
-2. Click "New Project"
-3. Import your GitHub repository: `yashh21nd/pulse_ai`
-4. Use these settings:
+2. Click "New Project" 
+3. Import: `yashh21nd/pulse_ai`
 
-## ⚙️ Vercel Project Settings
+## ⚙️ Project Configuration
+
+Vercel will auto-detect settings, but verify:
 
 ```
 Framework Preset: Other
-Root Directory: (leave blank)
 Build Command: npm run build
 Output Directory: dist/client
-Install Command: npm install
+Root Directory: (leave blank)
+Node.js Version: 18.x
 ```
 
 ## 🌐 Environment Variables
 
-Add these in Vercel Dashboard → Project → Settings → Environment Variables:
+**None required!** Vercel handles URLs automatically.
 
+Optional (in Dashboard → Settings → Environment Variables):
 ```
 NODE_ENV=production
-FRONTEND_URL=https://your-project-name.vercel.app
 ```
 
 ## 📁 Project Structure for Vercel

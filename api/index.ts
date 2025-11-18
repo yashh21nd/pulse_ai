@@ -1,14 +1,14 @@
+import { VercelRequest, VercelResponse } from '@vercel/node';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import path from 'path';
-import contextRoutes from './routes/context';
-import insightRoutes from './routes/insights';
 
 // Load environment variables
-dotenv.config({
-  path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env'
-});
+dotenv.config();
+
+// Import routes
+import contextRoutes from '../src/server/routes/context';
+import insightRoutes from '../src/server/routes/insights';
 
 const app = express();
 
@@ -17,10 +17,12 @@ const corsOptions = {
   origin: [
     'http://localhost:3000',
     'http://localhost:5173',
-    'https://context-bridge.vercel.app',
-    process.env.FRONTEND_URL || 'https://context-bridge.vercel.app'
-  ],
-  credentials: true
+    'https://*.vercel.app',
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined
+  ].filter(Boolean),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 // Middleware
@@ -38,9 +40,17 @@ app.get('/api/health', (req, res) => {
     status: 'Context Bridge API is running on Vercel',
     environment: process.env.NODE_ENV || 'development',
     timestamp: new Date().toISOString(),
-    platform: 'vercel'
+    platform: 'vercel',
+    url: process.env.VERCEL_URL || 'localhost'
   });
 });
 
-// Export for Vercel serverless functions
-export default app;
+// Catch all API routes
+app.all('/api/*', (req, res) => {
+  res.status(404).json({ error: 'API endpoint not found' });
+});
+
+// Export handler for Vercel
+export default (req: VercelRequest, res: VercelResponse) => {
+  return app(req as any, res as any);
+};

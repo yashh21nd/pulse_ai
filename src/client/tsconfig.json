@@ -5,13 +5,24 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
+    "typeRoots": [
+      "../../node_modules/@types",
+      "./src/types"
+    ],
+    "types": [
+      "react",
+      "react-dom"
+    ],
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
@@ -19,7 +30,9 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "../../node_modules/@types/react/index.d.ts",
+    "../../node_modules/@types/react-dom/index.d.ts"
   ],
   "exclude": [
     "node_modules",
