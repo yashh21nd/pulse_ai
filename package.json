@@ -13,10 +13,18 @@
     "client:dev": "vite --host localhost",
     "client:build": "tsc -p src/client/tsconfig.json && vite build",
     "client:preview": "vite preview",
-    "start": "node dist/server/index.js",
+    "start": "cross-env NODE_ENV=production node dist/server/index.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --cache",
     "type-check": "tsc --noEmit --incremental",
-    "clean": "rimraf dist *.tsbuildinfo node_modules/.tmp"
+    "clean": "rimraf dist *.tsbuildinfo node_modules/.tmp",
+    "deploy:vercel": "vercel --prod",
+    "deploy:netlify": "npm run build && netlify deploy --prod --dir=dist/client",
+    "deploy:railway": "railway up",
+    "deploy:render": "npm run build && npm start",
+    "start:prod": "cross-env NODE_ENV=production node dist/server/index.js",
+    "docker:build": "docker build -t context-bridge .",
+    "docker:run": "docker run -p 3000:3000 -p 5000:5000 context-bridge",
+    "docker:compose": "docker-compose up --build"
   },
   "keywords": ["ai", "context", "memory", "pulse", "coo", "typescript"],
   "author": "Pulse AI Intern Candidate",
@@ -49,6 +57,10 @@
     "rimraf": "^5.0.5",
     "tsx": "^4.6.0",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "cross-env": "^7.0.3",
+    "pm2": "^5.3.0",
+    "cross-env": "^7.0.3",
+    "pm2": "^5.3.0"
   }
 }

@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: context-bridge
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        generateValue: true
+    healthCheckPath: /api/health
+    numInstances: 1
+    # Auto-deploy on push to main branch
+    autoDeploy: true
+    # Static files configuration
+    staticPublishPath: ./dist/client
+    # Environment specific settings
+    disk:
+      name: context-bridge-disk
+      sizeGB: 1
+      mountPath: /opt/render/project/src/logs

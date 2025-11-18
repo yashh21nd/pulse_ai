@@ -1,0 +1,30 @@
+# Railway Deployment Configuration
+# https://railway.app
+
+# Build configuration
+[build]
+  builder = "NIXPACKS"
+
+# Environment variables
+[env]
+  NODE_ENV = "production"
+  PORT = "${{RAILWAY_PORT}}"
+
+# Health check
+[healthcheck]
+  path = "/api/health"
+  interval = "30s"
+  timeout = "10s"
+
+# Services
+[[services]]
+  name = "context-bridge"
+  
+  [services.build]
+    command = "npm run build"
+  
+  [services.start]
+    command = "npm start"
+  
+  [services.variables]
+    NODE_ENV = "production"
